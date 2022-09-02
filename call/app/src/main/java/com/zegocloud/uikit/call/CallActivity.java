@@ -1,6 +1,5 @@
-package com.zegocloud.uikit.callwithinvitation;
+package com.zegocloud.uikit.call;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;

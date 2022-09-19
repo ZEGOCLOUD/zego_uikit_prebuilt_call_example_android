@@ -56,12 +56,12 @@
 
       </com.google.android.material.textfield.TextInputLayout>
 
-      <com.zegocloud.uikit.prebuilt.videoconference.invite.ZegoStartCallInvitationButton
+      <com.zegocloud.uikit.prebuilt.callinvite.ZegoStartCallInvitationButton
         android:id="@+id/new_voice_call"
         android:layout_width="48dp"
         android:layout_height="48dp" />
 
-      <com.zegocloud.uikit.prebuilt.videoconference.invite.ZegoStartCallInvitationButton
+      <com.zegocloud.uikit.prebuilt.callinvite.ZegoStartCallInvitationButton
         android:id="@+id/new_video_call"
         android:layout_width="48dp"
         android:layout_height="48dp"

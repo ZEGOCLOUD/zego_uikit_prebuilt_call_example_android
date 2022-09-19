@@ -1,7 +1,20 @@
 package com.zegocloud.uikit.callwithinvitation;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.textfield.TextInputLayout;
+import com.zegocloud.uikit.components.invite.ZegoInvitationType;
+import com.zegocloud.uikit.prebuilt.call.ZegoMenuBarButtonName;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
+import com.zegocloud.uikit.prebuilt.callinvite.ZegoCallInvitationData;
+import com.zegocloud.uikit.prebuilt.callinvite.ZegoStartCallInvitationButton;
+import com.zegocloud.uikit.prebuilt.callinvite.ZegoUIKitPrebuiltCallConfigProvider;
+import com.zegocloud.uikit.prebuilt.callinvite.ZegoUIKitPrebuiltCallInvitationService;
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     public void initCallInviteService(String generateUserID) {
         long appID = ;
         String appSign = "";
+
 
         String userID = generateUserID;
         String userName = userID;

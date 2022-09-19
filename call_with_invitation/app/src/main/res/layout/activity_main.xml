@@ -1,5 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
+
+  <TextView
+    android:id="@+id/your_user_id"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Your UserID:"
+    app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <LinearLayout
+    android:id="@+id/linearLayout2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/your_user_id">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:padding="4dp"
+      android:text="Make a new call and invite other to join:" />
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      android:orientation="horizontal">
+
+      <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/target_user_id"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Invitee UserID"
+        android:minWidth="164dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:inputType="number"
+          android:maxLength="5" />
+
+      </com.google.android.material.textfield.TextInputLayout>
+
+      <com.zegocloud.uikit.prebuilt.videoconference.invite.ZegoStartCallInvitationButton
+        android:id="@+id/new_voice_call"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+      <com.zegocloud.uikit.prebuilt.videoconference.invite.ZegoStartCallInvitationButton
+        android:id="@+id/new_video_call"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp" />
+    </LinearLayout>
+  </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

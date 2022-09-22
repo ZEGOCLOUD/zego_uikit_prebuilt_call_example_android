@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  package="com.zegocloud.uikit.call">
+  xmlns:tools="http://schemas.android.com/tools">
 
   <application
     android:allowBackup="true"
@@ -11,12 +10,16 @@
     android:label="@string/app_name"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
-    android:theme="@style/Theme.ZegoUIKitCallExample"
+    android:theme="@style/Theme.ZegoUIKitGroupCallExample"
     tools:targetApi="31">
     <activity
       android:name=".CallActivity"
-      android:exported="false"
-      android:screenOrientation="portrait" />
+      android:screenOrientation="portrait"
+      android:exported="false">
+      <meta-data
+        android:name="android.app.lib_name"
+        android:value="" />
+    </activity>
     <activity
       android:name=".MainActivity"
       android:exported="true">
@@ -25,6 +28,10 @@
 
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+
+      <meta-data
+        android:name="android.app.lib_name"
+        android:value="" />
     </activity>
   </application>
 

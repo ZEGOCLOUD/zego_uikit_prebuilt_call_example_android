@@ -39,7 +39,7 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginBottom="16dp"
-    android:text="Join a Call by ID:"
+    android:text="Join a call by ID:"
     android:textColor="@android:color/black"
     android:textSize="18sp"
     app:layout_constraintBottom_toTopOf="@id/text_input_layout"

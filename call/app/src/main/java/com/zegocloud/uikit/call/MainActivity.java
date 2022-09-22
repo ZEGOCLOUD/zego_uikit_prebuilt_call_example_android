@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.join_btn).setOnClickListener(v -> {
             String callID = textInputLayout.getEditText().getText().toString();
             if (callID.isEmpty()) {
-                textInputLayout.setError("please input conferenceID");
+                textInputLayout.setError("please input callID");
                 return;
             }
             textInputLayout.setError("");

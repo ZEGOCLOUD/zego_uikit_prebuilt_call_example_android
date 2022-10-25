@@ -1,19 +1,17 @@
 package com.zegocloud.uikit.callwithinvitation;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
-import com.zegocloud.uikit.components.invite.ZegoInvitationType;
-import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
-import com.zegocloud.uikit.prebuilt.call.config.ZegoMenuBarButtonName;
-import com.zegocloud.uikit.prebuilt.call.invite.ZegoCallInvitationData;
-import com.zegocloud.uikit.prebuilt.call.invite.ZegoStartCallInvitationButton;
-import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallConfigProvider;
+import com.zegocloud.uikit.plugin.signaling.ZegoSignalingPluginCore;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
+import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoStartCallInvitationButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView yourUserID = findViewById(R.id.your_user_id);
         String generateUserID = generateUserID();
+
         yourUserID.setText("Your User ID :" + generateUserID);
 
         initCallInviteService(generateUserID);
@@ -40,7 +39,12 @@ public class MainActivity extends AppCompatActivity {
         newVideoCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
             String targetUserID = inputLayout.getEditText().getText().toString();
-            newVideoCall.setInvitees(Collections.singletonList(new ZegoUIKitUser(targetUserID)));
+            String[] split = targetUserID.split(",");
+            List<ZegoUIKitUser> users = new ArrayList<>();
+            for (String userID : split) {
+                users.add(new ZegoUIKitUser(userID));
+            }
+            newVideoCall.setInvitees(users);
         });
     }
 
@@ -50,34 +54,26 @@ public class MainActivity extends AppCompatActivity {
         newVoiceCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
             String targetUserID = inputLayout.getEditText().getText().toString();
-            newVoiceCall.setInvitees(Collections.singletonList(new ZegoUIKitUser(targetUserID)));
+            String[] split = targetUserID.split(",");
+            List<ZegoUIKitUser> users = new ArrayList<>();
+            for (String userID : split) {
+                users.add(new ZegoUIKitUser(userID));
+            }
+            newVoiceCall.setInvitees(users);
         });
     }
 
     public void initCallInviteService(String generateUserID) {
         long appID = ;
-        String appSign = ;
-
+        String appSign = "";
 
         String userID = generateUserID;
-        String userName = userID;
+        String userName = generateUserID + "_" + Build.MANUFACTURER;
 
-        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName);
-        ZegoUIKitPrebuiltCallInvitationService.setPrebuiltCallConfigProvider(new ZegoUIKitPrebuiltCallConfigProvider() {
-            @Override
-            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
-                ZegoUIKitPrebuiltCallConfig callConfig = new ZegoUIKitPrebuiltCallConfig();
-                boolean isVideoCall = invitationData.type == ZegoInvitationType.VIDEO_CALL.getValue();
-                callConfig.turnOnCameraWhenJoining = isVideoCall;
-                if (!isVideoCall) {
-                    callConfig.bottomMenuBarConfig.buttons = Arrays.asList(
-                        ZegoMenuBarButtonName.TOGGLE_MICROPHONE_BUTTON,
-                        ZegoMenuBarButtonName.SWITCH_AUDIO_OUTPUT_BUTTON,
-                        ZegoMenuBarButtonName.HANG_UP_BUTTON);
-                }
-                return callConfig;
-            }
-        });
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig(
+            ZegoSignalingPluginCore.getInstance());
+        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
+            callInvitationConfig);
     }
 
     private String generateUserID() {
@@ -96,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ZegoUIKitPrebuiltCallInvitationService.logout();
+        ZegoUIKitPrebuiltCallInvitationService.unInit();
     }
-
 }

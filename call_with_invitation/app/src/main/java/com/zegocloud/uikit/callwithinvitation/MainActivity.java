@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void initCallInviteService(String generateUserID) {
         long appID = ;
-        String appSign = "";
+        String appSign = ;
 
         String userID = generateUserID;
         String userName = generateUserID + "_" + Build.MANUFACTURER;

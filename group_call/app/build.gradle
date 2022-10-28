@@ -3,7 +3,6 @@ plugins {
 }
 
 android {
-    namespace 'com.zegocloud.uikit.prebuilt.groupcallexample'
     compileSdk 32
 
     defaultConfig {

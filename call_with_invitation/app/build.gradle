@@ -41,6 +41,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    implementation 'com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:1.2.1'
+    implementation 'com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:1.2.+'
     implementation 'com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:1.1.0'
 }

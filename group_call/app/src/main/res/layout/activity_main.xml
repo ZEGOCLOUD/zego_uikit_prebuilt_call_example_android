@@ -4,45 +4,14 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-  <com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/text_input_layout"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:hint="call ID"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toStartOf="@+id/join_btn"
-    app:layout_constraintHorizontal_chainStyle="spread"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.4"
-    app:layout_constraintWidth_min="240dp">
-
-    <com.google.android.material.textfield.TextInputEditText
-      android:layout_width="match_parent"
-      android:layout_height="match_parent" />
-  </com.google.android.material.textfield.TextInputLayout>
-
   <com.google.android.material.button.MaterialButton
     android:id="@+id/join_btn"
     android:layout_width="wrap_content"
-    android:layout_height="0dp"
-    android:text="Join"
-    app:layout_constraintBottom_toBottomOf="@id/text_input_layout"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@id/text_input_layout"
-    app:layout_constraintTop_toTopOf="@id/text_input_layout"
-    app:layout_constraintVertical_bias="0.0" />
-
-  <TextView
-    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginBottom="16dp"
-    android:text="Join a call by ID:"
-    android:textColor="@android:color/black"
-    android:textSize="18sp"
-    app:layout_constraintBottom_toTopOf="@id/text_input_layout"
-    app:layout_constraintStart_toStartOf="parent" />
+    android:text="Start Group Call"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

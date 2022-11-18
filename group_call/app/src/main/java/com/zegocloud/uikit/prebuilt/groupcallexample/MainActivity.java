@@ -1,9 +1,10 @@
 package com.zegocloud.uikit.prebuilt.groupcallexample;
 
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.Build;
 import android.os.Bundle;
-import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,19 +13,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextInputLayout textInputLayout = findViewById(R.id.text_input_layout);
+        long appID = ;
+        String appSign = ;
+
+        String userID = Build.MANUFACTURER + "_" + generateUserID();
+        String userName = userID + "_Name";
+        String callID = "test_group_call_id";
+
         findViewById(R.id.join_btn).setOnClickListener(v -> {
-            String callID = textInputLayout.getEditText().getText().toString();
-            if (callID.isEmpty()) {
-                textInputLayout.setError("please input callID");
-                return;
-            }
-            textInputLayout.setError("");
             Intent intent = new Intent(MainActivity.this, CallActivity.class);
+            intent.putExtra("appID", appID);
+            intent.putExtra("appSign", appSign);
+            intent.putExtra("userID", userID);
+            intent.putExtra("userName", userName);
             intent.putExtra("callID", callID);
             startActivity(intent);
         });
+    }
 
-        textInputLayout.getEditText().setText("call_id");
+    private String generateUserID() {
+        StringBuilder builder = new StringBuilder();
+        Random random = new Random();
+        while (builder.length() < 5) {
+            int nextInt = random.nextInt(10);
+            if (builder.length() == 0 && nextInt == 0) {
+                continue;
+            }
+            builder.append(nextInt);
+        }
+        return builder.toString();
     }
 }

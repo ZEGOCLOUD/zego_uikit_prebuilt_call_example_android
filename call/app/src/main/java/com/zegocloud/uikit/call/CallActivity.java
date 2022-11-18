@@ -1,11 +1,9 @@
 package com.zegocloud.uikit.call;
 
-import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallFragment;
-import java.util.Random;
 
 public class CallActivity extends AppCompatActivity {
 
@@ -18,29 +16,16 @@ public class CallActivity extends AppCompatActivity {
     }
 
     public void addFragment() {
-        long appID = ;
-        String appSign = "";
 
+        long appID = getIntent().getLongExtra("appID", 0L);
+        String appSign = getIntent().getStringExtra("appSign");
+        String userID = getIntent().getStringExtra("userID");
+        String userName = getIntent().getStringExtra("userName");
         String callID = getIntent().getStringExtra("callID");
-        String userID = Build.MANUFACTURER + "_" + generateUserID();
-        String userName = userID + "_Name";
 
         ZegoUIKitPrebuiltCallConfig config = ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall();
         ZegoUIKitPrebuiltCallFragment fragment = ZegoUIKitPrebuiltCallFragment.newInstance(appID, appSign, userID,
             userName, callID, config);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commitNow();
-    }
-
-    private String generateUserID() {
-        StringBuilder builder = new StringBuilder();
-        Random random = new Random();
-        while (builder.length() < 5) {
-            int nextInt = random.nextInt(10);
-            if (builder.length() == 0 && nextInt == 0) {
-                continue;
-            }
-            builder.append(nextInt);
-        }
-        return builder.toString();
     }
 }

@@ -2,7 +2,7 @@
 
 - - -
 
-<img src="https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/invitation_calls.gif" >
+![call_gif](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/Flutter/call/invitation_calls.gif)
 
 
 ## Prerequisites
@@ -33,12 +33,12 @@ dependencyResolutionManagement {
 
 <div class="mk-warning">
 
-If you can't find the above fields in `settings.gradle`, it's probably because your Android Gradle Plugin version is lower than v7.1.0. 
+If you can't find the above fields in `settings.gradle`, it's probably because your Android Gradle Plugin version is lower than v7.1.0.
 
 For more details, see [Android Gradle Plugin Release Note v7.1.0](https://developer.android.com/studio/releases/gradle-plugin#settings-gradle).
 </div>
 
-- If your Android Gradle Plugin is **earlier than 7.1.0**: enter your project's root directory, open the `build.gradle` file to add the jitpack to `allprojects`->`repositories` like this: 
+- If your Android Gradle Plugin is **earlier than 7.1.0**: enter your project's root directory, open the `build.gradle` file to add the jitpack to `allprojects`->`repositories` like this:
 
 ```groovy
 allprojects {
@@ -48,7 +48,7 @@ allprojects {
         maven { url "https://jitpack.io" }  // <- Add this line.
     }
 }
-``` 
+```
 
 2. Modify your app-level `build.gradle` file:
 ```groovy
@@ -58,10 +58,10 @@ dependencies {
     implementation 'com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:1.4.0'  // Add this line to your module-level build.gradle file's dependencies, usually named [app].
     implementation platform('com.google.firebase:firebase-bom:29.3.1') // Add this line to your module-level build.gradle file's dependencies，Import the Firebase BoM。
 }
-```  
+```
 3. follow the instructions in the video below.
 
-<video poster="http://storage.zego.im/Pics/ZegoUIKit/videos/how_to_enable_offline_call_invitation_android.png" src="https://storage.zego.im/sdk-doc/doc/video/ZegoUIKit/callkit_zpns_config1.mov" width="80%" preload="auto" controls></video>
+[![Watch the video](https://storage.zego.im/sdk-doc/Pics/ZegoUIKit/videos/how_to_enable_offline_call_invitation_android.png)](https://youtu.be/mhetL3MTKsE)
 
 Resource may help: [Firebase Console](https://console.firebase.google.com/)
 

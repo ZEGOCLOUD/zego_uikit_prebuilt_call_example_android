@@ -141,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
         //androidNotificationConfig.channelID must be the same as the FCM Channel ID in [ZEGOCLOUD Admin Console|_blank]https://console.zegocloud.com),
         // and the androidNotificationConfig.channelName can be an arbitrary value.
         ZegoNotificationConfig notificationConfig = new ZegoNotificationConfig();
-        notificationConfig.sound = "zego_incoming";
-        notificationConfig.channelID = "ZegoUIKit";
-        notificationConfig.channelName = "offlineCall";
+        notificationConfig.sound = "";
+        notificationConfig.channelID = "";
+        notificationConfig.channelName = "";
         callInvitationConfig.notificationConfig = notificationConfig;
         callInvitationConfig.showDeclineButton = getButtonStatus();
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,

@@ -57,12 +57,12 @@
       android:gravity="center"
       android:orientation="horizontal">
 
-      <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoStartCallInvitationButton
+      <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
         android:id="@+id/new_voice_call"
         android:layout_width="48dp"
         android:layout_height="48dp" />
 
-      <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoStartCallInvitationButton
+      <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
         android:id="@+id/new_video_call"
         android:layout_width="48dp"
         android:layout_height="48dp"

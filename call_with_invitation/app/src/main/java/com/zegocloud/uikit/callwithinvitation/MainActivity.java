@@ -8,7 +8,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.zegocloud.uikit.plugin.signaling.ZegoSignalingPlugin;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
-import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoStartCallInvitationButton;
+import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initVideoButton() {
-        ZegoStartCallInvitationButton newVideoCall = findViewById(R.id.new_video_call);
+        ZegoSendCallInvitationButton newVideoCall = findViewById(R.id.new_video_call);
         newVideoCall.setIsVideoCall(true);
         newVideoCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
             String[] split = targetUserID.split(",");
             List<ZegoUIKitUser> users = new ArrayList<>();
             for (String userID : split) {
+                String userName = userID + "_name";
                 users.add(new ZegoUIKitUser(userID));
             }
             newVideoCall.setInvitees(users);
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initVoiceButton() {
-        ZegoStartCallInvitationButton newVoiceCall = findViewById(R.id.new_voice_call);
+        ZegoSendCallInvitationButton newVoiceCall = findViewById(R.id.new_voice_call);
         newVoiceCall.setIsVideoCall(false);
         newVoiceCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
@@ -57,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
             String[] split = targetUserID.split(",");
             List<ZegoUIKitUser> users = new ArrayList<>();
             for (String userID : split) {
-                users.add(new ZegoUIKitUser(userID));
+                String userName = userID + "_name";
+                users.add(new ZegoUIKitUser(userID,userName));
             }
             newVoiceCall.setInvitees(users);
         });

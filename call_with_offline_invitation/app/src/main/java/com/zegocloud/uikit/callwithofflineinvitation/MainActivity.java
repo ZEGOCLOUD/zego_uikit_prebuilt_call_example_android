@@ -134,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
         String userID = generateUserID;
         userName = generateUserID + "_" + Build.MANUFACTURER;
 
-        callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig(
-                ZegoSignalingPlugin.getInstance());
+        callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
         callInvitationConfig.notifyWhenAppRunningInBackgroundOrQuit = true;
         //This property needs to be set when you are building an Android app and when the notifyWhenAppRunningInBackgroundOrQuit is true.
         //androidNotificationConfig.channelID must be the same as the FCM Channel ID in [ZEGOCLOUD Admin Console|_blank]https://console.zegocloud.com),

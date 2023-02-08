@@ -41,5 +41,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    implementation 'com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:latest.release'
+    implementation 'com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+'
 }

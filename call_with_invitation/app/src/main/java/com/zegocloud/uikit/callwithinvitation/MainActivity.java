@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             List<ZegoUIKitUser> users = new ArrayList<>();
             for (String userID : split) {
                 String userName = userID + "_name";
-                users.add(new ZegoUIKitUser(userID));
+                users.add(new ZegoUIKitUser(userID,userName));
             }
             newVideoCall.setInvitees(users);
         });

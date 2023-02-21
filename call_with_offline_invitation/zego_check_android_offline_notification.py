@@ -80,15 +80,6 @@ class AndroidConfigChecker:
         return False
     
       
-#传参数进行 Debug Release的选择，默认为Debug  比如 python3 generate.py Release
 if __name__ == "__main__":
     android_checker = AndroidConfigChecker()
     android_checker.start_check()
-    
-    # script_dir = sys.argv[0][0:sys.argv[0].rfind("generate.py")]
-    # os.chdir(script_dir)
-
-    # os.system('cmake -H../TalkLineSDK -B../build/TalkLineSDK -DCMAKE_BUILD_TYPE=%s' % build_type)
-    # os.system('cmake --build ../build/TalkLineSDK --config %s -- -j 10' % build_type)
-    # os.system('cmake -H../Demo -B../build/Demo -DCMAKE_BUILD_TYPE=%s' % build_type)
-    # os.system('cmake --build ../build/Demo --config %s -- -j 10' % build_type)

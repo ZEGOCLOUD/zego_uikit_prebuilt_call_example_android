@@ -123,5 +123,24 @@ public class MainActivity extends AppCompatActivity {
 
 Then, you can create a call invitation by starting your `MainActivity`.
 
+
+## Check if your local configuration is correct
+
+### Android
+
+Please run the cmmand as below:
+
+`python3 zego_check_android_offline_notification.py` 
+
+You will get the output like this if everything is good:
+```
+✅ The google-service.json is in the right location.
+✅ The package name matches google-service.json.
+✅ The project level gradle file is ready.
+✅ The plugin config in the app-level gradle file is correct.
+✅ Firebase dependencies config in the app-level gradle file is correct.
+✅ Firebase-Messaging dependencies config in the app-level gradle file is correct.
+```
+
 ## Related guide
 [Custom Prebuilt UI](https://docs.zegocloud.com/article/14766)

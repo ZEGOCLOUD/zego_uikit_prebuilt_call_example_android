@@ -139,7 +139,6 @@ You will get the output like this if everything is good:
 ✅ The project level gradle file is ready.
 ✅ The plugin config in the app-level gradle file is correct.
 ✅ Firebase dependencies config in the app-level gradle file is correct.
-✅ Firebase-Messaging dependencies config in the app-level gradle file is correct.
 ```
 
 ## Related guide

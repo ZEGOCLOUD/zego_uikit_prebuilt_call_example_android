@@ -1,18 +1,14 @@
 package com.zegocloud.uikit.callwithofflineinvitation;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
-import com.zegocloud.uikit.plugin.signaling.ZegoSignalingPlugin;
 import com.zegocloud.uikit.prebuilt.call.config.ZegoNotificationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
@@ -51,32 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         initVideoButton();
 
-        Button button = findViewById(R.id.show_munu);
-        button.setText(getButtonStatus() ? "显示拒绝按钮" : "隐藏拒绝按钮");
-
-        button.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(this, button);
-            popup.getMenuInflater().inflate(R.menu.option_menu, popup.getMenu());
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int itemId = item.getItemId();
-                    if (itemId == R.id.option_1) {
-                        callInvitationConfig.showDeclineButton = true;
-                        saveButtonStatus(true);
-                    } else if (itemId == R.id.option_2) {
-                        callInvitationConfig.showDeclineButton = false;
-                        saveButtonStatus(false);
-                    }
-                    button.setText(item.getTitle());
-                    return true;
-                }
-            });
-            popup.setOnDismissListener(menu -> {
-
-            });
-            popup.show();
-        });
     }
 
 
@@ -144,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         notificationConfig.channelID = "";
         notificationConfig.channelName = "";
         callInvitationConfig.notificationConfig = notificationConfig;
-        callInvitationConfig.showDeclineButton = getButtonStatus();
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
                 callInvitationConfig);
     }
@@ -176,17 +145,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return spValue;
         }
-    }
-
-    private void saveButtonStatus(boolean isShow) {
-        SharedPreferences.Editor edit = sp.edit();
-        edit.putBoolean("isShow", isShow);
-        edit.apply();
-    }
-
-    private boolean getButtonStatus() {
-        boolean spValue = sp.getBoolean("isShow", true);
-        return spValue;
     }
 
     @Override

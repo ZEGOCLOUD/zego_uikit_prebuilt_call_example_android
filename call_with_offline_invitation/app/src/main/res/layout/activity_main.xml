@@ -70,15 +70,4 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/show_munu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="20dp"
-        android:text="隐藏拒绝按钮" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

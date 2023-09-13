@@ -111,11 +111,11 @@ public class MainActivity extends AppCompatActivity {
         // and the androidNotificationConfig.channelName can be an arbitrary value.
         ZegoNotificationConfig notificationConfig = new ZegoNotificationConfig();
         notificationConfig.sound = "";
-        notificationConfig.channelID = "";
-        notificationConfig.channelName = "";
+        notificationConfig.channelID = ;
+        notificationConfig.channelName = "ZegoTestChannelName";
         callInvitationConfig.notificationConfig = notificationConfig;
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
-                callInvitationConfig);
+            callInvitationConfig);
     }
 
     private String generateUserID() {

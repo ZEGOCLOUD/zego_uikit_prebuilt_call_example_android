@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
+import com.zegocloud.uikit.plugin.invitation.ZegoInvitationType;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoCallInvitationData;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
@@ -72,6 +76,27 @@ public class MainActivity extends AppCompatActivity {
         String userName = generateUserID + "_" + Build.MANUFACTURER;
 
         ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+
+        callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
+            @Override
+            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
+                ZegoUIKitPrebuiltCallConfig config = null;
+                boolean isVideoCall = invitationData.type == ZegoInvitationType.VIDEO_CALL.getValue();
+                boolean isGroupCall = invitationData.invitees.size() > 1;
+                if (isVideoCall && isGroupCall) {
+                    config = ZegoUIKitPrebuiltCallConfig.groupVideoCall();
+                } else if (!isVideoCall && isGroupCall) {
+                    config = ZegoUIKitPrebuiltCallConfig.groupVoiceCall();
+                } else if (!isVideoCall) {
+                    config = ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+                } else {
+                    config = ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall();
+                }
+                return config;
+
+            }
+        };
+
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
             callInvitationConfig);
     }

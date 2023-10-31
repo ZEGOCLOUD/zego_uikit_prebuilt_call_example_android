@@ -16,6 +16,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    namespace 'com.zegocloud.uikit.callwithofflineinvitation'
+
     buildTypes {
         release {
             minifyEnabled false

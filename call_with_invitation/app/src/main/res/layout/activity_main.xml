@@ -4,28 +4,48 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
+
+  <TextView
+    android:id="@+id/user_home_page"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="96dp"
+    android:text="USER HOME PAGE"
+    android:textSize="28sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
   <TextView
     android:id="@+id/your_user_id"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="96dp"
+    android:layout_marginTop="16dp"
     android:text="Your UserID:"
-    app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.35"
-    app:layout_constraintVertical_chainStyle="packed" />
+    app:layout_constraintTop_toBottomOf="@id/user_home_page" />
+
+  <TextView
+    android:id="@+id/your_user_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:text="Your UserName:"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/your_user_id" />
+
 
   <LinearLayout
     android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="96dp"
     android:orientation="vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/your_user_id">
+    app:layout_constraintTop_toBottomOf="@+id/your_user_name">
 
     <TextView
       android:layout_width="wrap_content"
@@ -39,10 +59,9 @@
       style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_margin="16dp"
       android:hint="Invitee UserID"
-      android:minWidth="164dp"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp">
+      android:minWidth="164dp">
 
       <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"
@@ -68,5 +87,13 @@
         android:layout_height="48dp"
         android:layout_marginStart="8dp" />
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/user_logout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="16dp"
+      android:layout_marginTop="32dp"
+      android:text="Sign Out" />
   </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

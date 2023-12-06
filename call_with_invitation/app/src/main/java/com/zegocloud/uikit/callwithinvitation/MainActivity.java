@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
@@ -28,6 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
         yourUserID.setText("Your User ID :" + userID);
         yourUserName.setText("Your User Name :" + userName);
+
+        long appID = ;
+        String appSign = ;
+
+        initCallInviteService(appID, appSign, userID, userName);
 
         initVoiceButton();
 
@@ -53,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
             });
             builder.create().show();
         });
+    }
+
+    public void initCallInviteService(long appID, String appSign, String userID, String userName) {
+
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+
+        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
+            callInvitationConfig);
     }
 
     private void initVideoButton() {

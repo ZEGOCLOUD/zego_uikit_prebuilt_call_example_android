@@ -1,62 +1,102 @@
 package com.zegocloud.uikit.callwithofflineinvitation;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
+import android.Manifest.permission;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog.Builder;
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
-import com.zegocloud.uikit.prebuilt.call.config.ZegoNotificationConfig;
+import com.permissionx.guolindev.PermissionX;
+import com.permissionx.guolindev.callback.ExplainReasonCallback;
+import com.permissionx.guolindev.callback.RequestCallback;
+import com.permissionx.guolindev.request.ExplainScope;
+import com.tencent.mmkv.MMKV;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
-import com.zegocloud.uikit.prebuilt.call.invite.internal.ClickListener;
-import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallUser;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
-
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
-
-    private String userName;
-    private SharedPreferences sp;
-
-    private ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        sp = getSharedPreferences("offline", Context.MODE_PRIVATE);
-
         TextView yourUserID = findViewById(R.id.your_user_id);
-        String userID = getUserId();
+        TextView yourUserName = findViewById(R.id.your_user_name);
+        String userID = getIntent().getStringExtra("userID");
+        String userName = getIntent().getStringExtra("userName");
 
         yourUserID.setText("Your User ID :" + userID);
+        yourUserName.setText("Your User Name :" + userName);
 
-        initCallInviteService(userID);
+        long appID = ;
+        String appSign = ;
+
+
+        initCallInviteService(appID, appSign, userID, userName);
 
         initVoiceButton();
 
         initVideoButton();
 
+        findViewById(R.id.user_logout).setOnClickListener(v -> {
+            Builder builder = new Builder(MainActivity.this);
+            builder.setTitle("Sign Out");
+            builder.setMessage("Are you sure to Sign Out?After Sign out you can't receive offline calls");
+            builder.setNegativeButton(R.string.call_cancel, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.setPositiveButton(R.string.call_ok, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    signOut();
+                    finish();
+                }
+            });
+            builder.create().show();
+        });
+
+        PermissionX.init(this).permissions(permission.SYSTEM_ALERT_WINDOW)
+            .onExplainRequestReason(new ExplainReasonCallback() {
+                @Override
+                public void onExplainReason(@NonNull ExplainScope scope, @NonNull List<String> deniedList) {
+                    String message = "We need your consent for the following permissions in order to use the offline call function properly";
+                    scope.showRequestReasonDialog(deniedList, message, "Allow", "Deny");
+                }
+            }).request(new RequestCallback() {
+                @Override
+                public void onResult(boolean allGranted, @NonNull List<String> grantedList,
+                    @NonNull List<String> deniedList) {
+                }
+            });
     }
 
+    private void signOut() {
+        MMKV.defaultMMKV().remove("user_id");
+        MMKV.defaultMMKV().remove("user_name");
+        ZegoUIKitPrebuiltCallInvitationService.unInit();
+    }
 
     private void initVideoButton() {
         ZegoSendCallInvitationButton newVideoCall = findViewById(R.id.new_video_call);
         newVideoCall.setIsVideoCall(true);
+
         //resourceID can be used to specify the ringtone of an offline call invitation,
         //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
         //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
-        newVideoCall.setResourceID("zegouikit_call");
+        //        newVideoCall.setResourceID("zegouikit_call");
+        newVideoCall.setResourceID("zego_data");
+
         newVideoCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
             String targetUserID = inputLayout.getEditText().getText().toString();
@@ -73,10 +113,13 @@ public class MainActivity extends AppCompatActivity {
     private void initVoiceButton() {
         ZegoSendCallInvitationButton newVoiceCall = findViewById(R.id.new_voice_call);
         newVoiceCall.setIsVideoCall(false);
+
         //resourceID can be used to specify the ringtone of an offline call invitation,
         //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
         //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
-        newVoiceCall.setResourceID("zegouikit_call");
+        //        newVoiceCall.setResourceID("zegouikit_call");
+        newVoiceCall.setResourceID("zego_data");
+
         newVoiceCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
             String targetUserID = inputLayout.getEditText().getText().toString();
@@ -88,69 +131,35 @@ public class MainActivity extends AppCompatActivity {
             }
             newVoiceCall.setInvitees(users);
         });
-
-        newVoiceCall.setOnClickListener(new ClickListener() {
-            @Override
-            public void onClick(int errorCode, String errorMessage, List<ZegoCallUser> errorInvitees) {
-
-            }
-        });
     }
 
-    public void initCallInviteService(String generateUserID) {
-        long appID = ;
-        String appSign = "";
+    public void initCallInviteService(long appID, String appSign, String userID, String userName) {
 
-        String userID = generateUserID;
-        userName = generateUserID + "_" + Build.MANUFACTURER;
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
 
-        callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
-        callInvitationConfig.notifyWhenAppRunningInBackgroundOrQuit = true;
-        //This property needs to be set when you are building an Android app and when the notifyWhenAppRunningInBackgroundOrQuit is true.
-        //androidNotificationConfig.channelID must be the same as the FCM Channel ID in [ZEGOCLOUD Admin Console|_blank]https://console.zegocloud.com),
-        // and the androidNotificationConfig.channelName can be an arbitrary value.
-        ZegoNotificationConfig notificationConfig = new ZegoNotificationConfig();
-        notificationConfig.sound = "";
-        notificationConfig.channelID = ;
-        notificationConfig.channelName = "ZegoTestChannelName";
-        callInvitationConfig.notificationConfig = notificationConfig;
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
             callInvitationConfig);
     }
 
-    private String generateUserID() {
-        StringBuilder builder = new StringBuilder();
-        Random random = new Random();
-        while (builder.length() < 5) {
-            int nextInt = random.nextInt(10);
-            if (builder.length() == 0 && nextInt == 0) {
-                continue;
-            }
-            builder.append(nextInt);
-        }
-        saveUserId(builder.toString());
-        return builder.toString();
-    }
-
-    private void saveUserId(String userId) {
-        SharedPreferences.Editor edit = sp.edit();
-        edit.putString("userId", userId);
-        edit.apply();
-    }
-
-    private String getUserId() {
-        String spValue = sp.getString("userId", "");
-        if (spValue.isEmpty()) {
-            return generateUserID();
-        } else {
-            return spValue;
-        }
-    }
-
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ZegoUIKitPrebuiltCallInvitationService.unInit();
+    public void onBackPressed() {
+        Builder builder = new Builder(MainActivity.this);
+        builder.setTitle("Sign Out");
+        builder.setMessage("Are you sure to Sign Out?After Sign out you can't receive offline calls");
+        builder.setNegativeButton(R.string.call_cancel, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.call_ok, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                signOut();
+                finish();
+            }
+        });
+        builder.create().show();
     }
-
 }

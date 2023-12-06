@@ -22,6 +22,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        MMKV.initialize(this);
+
         TextInputLayout userIDInput = findViewById(R.id.user_id);
         TextInputLayout userNameInput = findViewById(R.id.user_name);
         Button userLogin = findViewById(R.id.user_login);
@@ -53,21 +55,23 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn(String userID, String userName) {
+        if (TextUtils.isEmpty(userID) || TextUtils.isEmpty(userName)) {
+            return;
+        }
         CircularProgressIndicator progress = findViewById(R.id.progress_circular);
         progress.setVisibility(View.VISIBLE);
-        if (!TextUtils.isEmpty(userID) && !TextUtils.isEmpty(userName)) {
-            Handler fakeLoginProcess = new Handler(Looper.getMainLooper());
-            fakeLoginProcess.postDelayed((Runnable) () -> {
-                progress.setVisibility(View.GONE);
-                // fake login success
-                MMKV.defaultMMKV().putString("user_id", userID);
-                MMKV.defaultMMKV().putString("user_name", userName);
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra("userID", userID);
-                intent.putExtra("userName", userName);
-                startActivity(intent);
-            }, 1000);
-        }
+        Handler fakeLoginProcess = new Handler(Looper.getMainLooper());
+        fakeLoginProcess.postDelayed((Runnable) () -> {
+            progress.setVisibility(View.GONE);
+            // fake login success
+            MMKV.defaultMMKV().putString("user_id", userID);
+            MMKV.defaultMMKV().putString("user_name", userName);
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("userID", userID);
+            intent.putExtra("userName", userName);
+            startActivity(intent);
+        }, 1000);
     }
 }

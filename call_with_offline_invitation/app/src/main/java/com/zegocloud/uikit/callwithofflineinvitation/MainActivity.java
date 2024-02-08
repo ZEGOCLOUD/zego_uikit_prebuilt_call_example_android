@@ -14,6 +14,12 @@ import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.permissionx.guolindev.request.ExplainScope;
 import com.tencent.mmkv.MMKV;
+import com.zegocloud.uikit.plugin.internal.InvitationData;
+import com.zegocloud.uikit.plugin.invitation.ZegoInvitationType;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
+import com.zegocloud.uikit.prebuilt.call.config.ZegoMenuBarButtonName;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoCallInvitationData;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
@@ -137,8 +143,25 @@ public class MainActivity extends AppCompatActivity {
 
         ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
 
+        callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
+            @Override
+            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
+                ZegoUIKitPrebuiltCallConfig config = getConfig(invitationData);
+                customMenuBars(config);
+                return config;
+            }
+        };
+
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
             callInvitationConfig);
+    }
+
+    private void customMenuBars(ZegoUIKitPrebuiltCallConfig config) {
+        config.topMenuBarConfig.isVisible = true;
+        config.topMenuBarConfig.buttons.add(ZegoMenuBarButtonName.CHAT_BUTTON);
+        config.topMenuBarConfig.buttons.add(ZegoMenuBarButtonName.SHOW_MEMBER_LIST_BUTTON);
+        config.topMenuBarConfig.buttons.add(ZegoMenuBarButtonName.MINIMIZING_BUTTON);
+        config.bottomMenuBarConfig.buttons.add(ZegoMenuBarButtonName.MINIMIZING_BUTTON);
     }
 
     @Override
@@ -161,5 +184,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         builder.create().show();
+    }
+
+    public ZegoUIKitPrebuiltCallConfig getConfig(ZegoCallInvitationData invitationData){
+        boolean isVideoCall = invitationData.type == ZegoInvitationType.VIDEO_CALL.getValue();
+        boolean isGroupCall = invitationData.invitees.size() > 1;
+        ZegoUIKitPrebuiltCallConfig callConfig;
+        if (isVideoCall && isGroupCall) {
+            callConfig = ZegoUIKitPrebuiltCallConfig.groupVideoCall();
+        } else if (!isVideoCall && isGroupCall) {
+            callConfig = ZegoUIKitPrebuiltCallConfig.groupVoiceCall();
+        } else if (!isVideoCall) {
+            callConfig = ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
+        } else {
+            callConfig = ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall();
+        }
+        return callConfig;
     }
 }

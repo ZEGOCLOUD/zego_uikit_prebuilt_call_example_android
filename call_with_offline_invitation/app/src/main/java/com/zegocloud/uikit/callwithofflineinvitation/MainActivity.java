@@ -147,21 +147,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
                 ZegoUIKitPrebuiltCallConfig config = getConfig(invitationData);
-                customMenuBars(config);
                 return config;
             }
         };
 
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
             callInvitationConfig);
-    }
-
-    private void customMenuBars(ZegoUIKitPrebuiltCallConfig config) {
-        config.topMenuBarConfig.isVisible = true;
-        config.topMenuBarConfig.buttons.add(ZegoMenuBarButtonName.CHAT_BUTTON);
-        config.topMenuBarConfig.buttons.add(ZegoMenuBarButtonName.SHOW_MEMBER_LIST_BUTTON);
-        config.topMenuBarConfig.buttons.add(ZegoMenuBarButtonName.MINIMIZING_BUTTON);
-        config.bottomMenuBarConfig.buttons.add(ZegoMenuBarButtonName.MINIMIZING_BUTTON);
     }
 
     @Override

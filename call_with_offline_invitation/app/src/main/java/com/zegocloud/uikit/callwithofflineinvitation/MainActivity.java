@@ -16,14 +16,24 @@ import com.permissionx.guolindev.request.ExplainScope;
 import com.tencent.mmkv.MMKV;
 import com.zegocloud.uikit.plugin.invitation.ZegoInvitationType;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
-import com.zegocloud.uikit.prebuilt.call.invite.ZegoCallInvitationData;
-import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallConfigProvider;
+import com.zegocloud.uikit.prebuilt.call.event.CallEndListener;
+import com.zegocloud.uikit.prebuilt.call.event.ErrorEventsListener;
+import com.zegocloud.uikit.prebuilt.call.event.SignalPluginConnectListener;
+import com.zegocloud.uikit.prebuilt.call.event.ZegoCallEndReason;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallInvitationData;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+import com.zegocloud.uikit.service.express.IExpressEngineEventHandler;
+import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason;
+import im.zego.zim.enums.ZIMConnectionEvent;
+import im.zego.zim.enums.ZIMConnectionState;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONObject;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -149,8 +159,43 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        ZegoUIKitPrebuiltCallInvitationService.events.setErrorEventsListener(new ErrorEventsListener() {
+            @Override
+            public void onError(int errorCode, String message) {
+                Timber.d("onError() called with: errorCode = [" + errorCode + "], message = [" + message + "]");
+            }
+        });
+        ZegoUIKitPrebuiltCallInvitationService.events.invitationEvents.setPluginConnectListener(
+            new SignalPluginConnectListener() {
+                @Override
+                public void onSignalPluginConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event,
+                    JSONObject extendedData) {
+                    Timber.d(
+                        "onSignalPluginConnectionStateChanged() called with: state = [" + state + "], event = [" + event
+                            + "], extendedData = [" + extendedData + "]");
+                }
+            });
+
         ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
             callInvitationConfig);
+
+        ZegoUIKitPrebuiltCallInvitationService.events.callEvents.setCallEndListener(new CallEndListener() {
+            @Override
+            public void onCallEnd(ZegoCallEndReason callEndReason, String jsonObject) {
+                Timber.d("onCallEnd() called with: callEndReason = [" + callEndReason + "], jsonObject = [" + jsonObject
+                    + "]");
+            }
+        });
+
+        ZegoUIKitPrebuiltCallInvitationService.events.callEvents.setExpressEngineEventHandler(
+            new IExpressEngineEventHandler() {
+                @Override
+                public void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason, int errorCode,
+                    JSONObject extendedData) {
+                    Timber.d("onRoomStateChanged() called with: roomID = [" + roomID + "], reason = [" + reason
+                        + "], errorCode = [" + errorCode + "], extendedData = [" + extendedData + "]");
+                }
+            });
     }
 
     @Override
@@ -175,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public ZegoUIKitPrebuiltCallConfig getConfig(ZegoCallInvitationData invitationData){
+    public ZegoUIKitPrebuiltCallConfig getConfig(ZegoCallInvitationData invitationData) {
         boolean isVideoCall = invitationData.type == ZegoInvitationType.VIDEO_CALL.getValue();
         boolean isGroupCall = invitationData.invitees.size() > 1;
         ZegoUIKitPrebuiltCallConfig callConfig;
@@ -194,6 +239,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // when use minimize feature,it you swipe close this activity,call endCall()
+        // to make sure call is ended and the float window is dismissed
         ZegoUIKitPrebuiltCallInvitationService.endCall();
     }
 }

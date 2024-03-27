@@ -16,12 +16,12 @@ import com.permissionx.guolindev.request.ExplainScope;
 import com.tencent.mmkv.MMKV;
 import com.zegocloud.uikit.plugin.invitation.ZegoInvitationType;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService;
 import com.zegocloud.uikit.prebuilt.call.event.CallEndListener;
 import com.zegocloud.uikit.prebuilt.call.event.ErrorEventsListener;
 import com.zegocloud.uikit.prebuilt.call.event.SignalPluginConnectListener;
 import com.zegocloud.uikit.prebuilt.call.event.ZegoCallEndReason;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
-import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallInvitationData;
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private void signOut() {
         MMKV.defaultMMKV().remove("user_id");
         MMKV.defaultMMKV().remove("user_name");
-        ZegoUIKitPrebuiltCallInvitationService.unInit();
+        ZegoUIKitPrebuiltCallService.unInit();
     }
 
     private void initVideoButton() {
@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
     private void initVoiceButton() {
         ZegoSendCallInvitationButton newVoiceCall = findViewById(R.id.new_voice_call);
         newVoiceCall.setIsVideoCall(false);
+
+
 
         //resourceID can be used to specify the ringtone of an offline call invitation,
         //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
@@ -159,13 +161,13 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        ZegoUIKitPrebuiltCallInvitationService.events.setErrorEventsListener(new ErrorEventsListener() {
+        ZegoUIKitPrebuiltCallService.events.setErrorEventsListener(new ErrorEventsListener() {
             @Override
             public void onError(int errorCode, String message) {
                 Timber.d("onError() called with: errorCode = [" + errorCode + "], message = [" + message + "]");
             }
         });
-        ZegoUIKitPrebuiltCallInvitationService.events.invitationEvents.setPluginConnectListener(
+        ZegoUIKitPrebuiltCallService.events.invitationEvents.setPluginConnectListener(
             new SignalPluginConnectListener() {
                 @Override
                 public void onSignalPluginConnectionStateChanged(ZIMConnectionState state, ZIMConnectionEvent event,
@@ -176,10 +178,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
+        ZegoUIKitPrebuiltCallService.init(getApplication(), appID, appSign, userID, userName,
             callInvitationConfig);
 
-        ZegoUIKitPrebuiltCallInvitationService.events.callEvents.setCallEndListener(new CallEndListener() {
+        ZegoUIKitPrebuiltCallService.events.callEvents.setCallEndListener(new CallEndListener() {
             @Override
             public void onCallEnd(ZegoCallEndReason callEndReason, String jsonObject) {
                 Timber.d("onCallEnd() called with: callEndReason = [" + callEndReason + "], jsonObject = [" + jsonObject
@@ -187,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ZegoUIKitPrebuiltCallInvitationService.events.callEvents.setExpressEngineEventHandler(
+        ZegoUIKitPrebuiltCallService.events.callEvents.setExpressEngineEventHandler(
             new IExpressEngineEventHandler() {
                 @Override
                 public void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason, int errorCode,
@@ -241,6 +243,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         // when use minimize feature,it you swipe close this activity,call endCall()
         // to make sure call is ended and the float window is dismissed
-        ZegoUIKitPrebuiltCallInvitationService.endCall();
+        ZegoUIKitPrebuiltCallService.endCall();
     }
 }

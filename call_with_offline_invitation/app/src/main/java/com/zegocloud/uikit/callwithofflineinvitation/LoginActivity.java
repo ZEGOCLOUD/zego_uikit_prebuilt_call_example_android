@@ -1,12 +1,18 @@
 package com.zegocloud.uikit.callwithofflineinvitation;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputLayout;
@@ -48,19 +54,46 @@ public class LoginActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(userID) || TextUtils.isEmpty(userName)) {
             return;
         }
-        CircularProgressIndicator progress = findViewById(R.id.progress_circular);
-        progress.setVisibility(View.VISIBLE);
-        Handler fakeLoginProcess = new Handler(Looper.getMainLooper());
-        fakeLoginProcess.postDelayed((Runnable) () -> {
-            progress.setVisibility(View.GONE);
-            // fake login success
-            MMKV.defaultMMKV().putString("user_id", userID);
-            MMKV.defaultMMKV().putString("user_name", userName);
+        if (isNetworkAvailable(this)) {
+            CircularProgressIndicator progress = findViewById(R.id.progress_circular);
+            progress.setVisibility(View.VISIBLE);
+            Handler fakeLoginProcess = new Handler(Looper.getMainLooper());
+            fakeLoginProcess.postDelayed((Runnable) () -> {
+                progress.setVisibility(View.GONE);
+                // fake login success
+                MMKV.defaultMMKV().putString("user_id", userID);
+                MMKV.defaultMMKV().putString("user_name", userName);
 
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("userID", userID);
-            intent.putExtra("userName", userName);
-            startActivity(intent);
-        }, 1000);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("userID", userID);
+                intent.putExtra("userName", userName);
+                startActivity(intent);
+            }, 1000);
+        } else {
+            Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean isConnected;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            Network network = cm.getActiveNetwork();
+            if (null == network) {
+                return false;
+            }
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+            if (null == capabilities) {
+                return false;
+            }
+            isConnected =
+                capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && capabilities.hasCapability(
+                    NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        } else {
+            NetworkInfo activeNetworkInfo = cm.getActiveNetworkInfo();
+            isConnected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        }
+        return isConnected;
     }
 }

@@ -4,6 +4,7 @@ import android.Manifest.permission;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog.Builder;
@@ -14,20 +15,21 @@ import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.permissionx.guolindev.request.ExplainScope;
 import com.tencent.mmkv.MMKV;
-import com.zegocloud.uikit.plugin.invitation.ZegoInvitationType;
+import com.zegocloud.uikit.internal.ZegoUIKitLanguage;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService;
+import com.zegocloud.uikit.prebuilt.call.config.ZegoMenuBarButtonName;
 import com.zegocloud.uikit.prebuilt.call.event.CallEndListener;
 import com.zegocloud.uikit.prebuilt.call.event.ErrorEventsListener;
 import com.zegocloud.uikit.prebuilt.call.event.SignalPluginConnectListener;
 import com.zegocloud.uikit.prebuilt.call.event.ZegoCallEndReason;
+import com.zegocloud.uikit.prebuilt.call.event.ZegoMenuBarButtonClickListener;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallInvitationData;
+import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
 import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
-import com.zegocloud.uikit.service.express.IExpressEngineEventHandler;
-import im.zego.zegoexpress.constants.ZegoRoomStateChangedReason;
 import im.zego.zim.enums.ZIMConnectionEvent;
 import im.zego.zim.enums.ZIMConnectionState;
 import java.util.ArrayList;
@@ -63,13 +65,13 @@ public class MainActivity extends AppCompatActivity {
             Builder builder = new Builder(MainActivity.this);
             builder.setTitle("Sign Out");
             builder.setMessage("Are you sure to Sign Out?After Sign out you can't receive offline calls");
-            builder.setNegativeButton(R.string.call_cancel, new OnClickListener() {
+            builder.setNegativeButton("Cancel", new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                 }
             });
-            builder.setPositiveButton(R.string.call_ok, new OnClickListener() {
+            builder.setPositiveButton("OK", new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
@@ -128,8 +130,6 @@ public class MainActivity extends AppCompatActivity {
         ZegoSendCallInvitationButton newVoiceCall = findViewById(R.id.new_voice_call);
         newVoiceCall.setIsVideoCall(false);
 
-
-
         //resourceID can be used to specify the ringtone of an offline call invitation,
         //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
         //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
@@ -153,14 +153,16 @@ public class MainActivity extends AppCompatActivity {
 
         ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
 
+        callInvitationConfig.translationText = new ZegoTranslationText(ZegoUIKitLanguage.CHS);
         callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
             @Override
             public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
-                ZegoUIKitPrebuiltCallConfig config = getConfig(invitationData);
+                ZegoUIKitPrebuiltCallConfig config = ZegoUIKitPrebuiltCallInvitationConfig.generateDefaultConfig(
+                    invitationData);
                 return config;
             }
         };
-
+        //
         ZegoUIKitPrebuiltCallService.events.setErrorEventsListener(new ErrorEventsListener() {
             @Override
             public void onError(int errorCode, String message) {
@@ -189,15 +191,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ZegoUIKitPrebuiltCallService.events.callEvents.setExpressEngineEventHandler(
-            new IExpressEngineEventHandler() {
-                @Override
-                public void onRoomStateChanged(String roomID, ZegoRoomStateChangedReason reason, int errorCode,
-                    JSONObject extendedData) {
-                    Timber.d("onRoomStateChanged() called with: roomID = [" + roomID + "], reason = [" + reason
-                        + "], errorCode = [" + errorCode + "], extendedData = [" + extendedData + "]");
-                }
-            });
     }
 
     @Override
@@ -205,13 +198,13 @@ public class MainActivity extends AppCompatActivity {
         Builder builder = new Builder(MainActivity.this);
         builder.setTitle("Sign Out");
         builder.setMessage("Are you sure to Sign Out?After Sign out you can't receive offline calls");
-        builder.setNegativeButton(R.string.call_cancel, new OnClickListener() {
+        builder.setNegativeButton("Cancel", new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setPositiveButton(R.string.call_ok, new OnClickListener() {
+        builder.setPositiveButton("OK", new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -222,27 +215,12 @@ public class MainActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public ZegoUIKitPrebuiltCallConfig getConfig(ZegoCallInvitationData invitationData) {
-        boolean isVideoCall = invitationData.type == ZegoInvitationType.VIDEO_CALL.getValue();
-        boolean isGroupCall = invitationData.invitees.size() > 1;
-        ZegoUIKitPrebuiltCallConfig callConfig;
-        if (isVideoCall && isGroupCall) {
-            callConfig = ZegoUIKitPrebuiltCallConfig.groupVideoCall();
-        } else if (!isVideoCall && isGroupCall) {
-            callConfig = ZegoUIKitPrebuiltCallConfig.groupVoiceCall();
-        } else if (!isVideoCall) {
-            callConfig = ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall();
-        } else {
-            callConfig = ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall();
-        }
-        return callConfig;
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // when use minimize feature,it you swipe close this activity,call endCall()
-        // to make sure call is ended and the float window is dismissed
+        // to make sure call is ended and the float window is dismissed.
         ZegoUIKitPrebuiltCallService.endCall();
+
     }
 }

@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(userID) || TextUtils.isEmpty(userName)) {
             return;
         }
-        if (isNetworkAvailable(this)) {
+//        if (isNetworkAvailable(this)) {
             CircularProgressIndicator progress = findViewById(R.id.progress_circular);
             progress.setVisibility(View.VISIBLE);
             Handler fakeLoginProcess = new Handler(Looper.getMainLooper());
@@ -69,9 +69,9 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("userName", userName);
                 startActivity(intent);
             }, 1000);
-        } else {
-            Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(this, "Network error", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     public static boolean isNetworkAvailable(Context context) {

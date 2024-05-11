@@ -40,7 +40,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation platform('com.google.firebase:firebase-bom:29.3.1')
+    implementation 'com.google.firebase:firebase-messaging:21.1.0'
 
     implementation 'com.github.ZEGOCLOUD:zego_uikit_prebuilt_call_android:+'
-//    implementation 'com.github.ZEGOCLOUD:zego_uikit_signaling_plugin_android:+'
 }

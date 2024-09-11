@@ -3,29 +3,31 @@ package com.zegocloud.uikit.callwithofflineinvitation;
 import android.Manifest.permission;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.textfield.TextInputLayout;
-import com.permissionx.guolindev.PermissionX;
-import com.permissionx.guolindev.callback.ExplainReasonCallback;
-import com.permissionx.guolindev.callback.RequestCallback;
-import com.permissionx.guolindev.request.ExplainScope;
 import com.tencent.mmkv.MMKV;
+import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayout;
+import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutGalleryConfig;
+import com.zegocloud.uikit.components.audiovideocontainer.ZegoLayoutMode;
+import com.zegocloud.uikit.components.common.ZegoShowFullscreenModeToggleButtonRules;
 import com.zegocloud.uikit.internal.ZegoUIKitLanguage;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallConfig;
 import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService;
 import com.zegocloud.uikit.prebuilt.call.config.ZegoMenuBarButtonName;
+import com.zegocloud.uikit.prebuilt.call.core.invite.ZegoCallInvitationData;
 import com.zegocloud.uikit.prebuilt.call.event.CallEndListener;
 import com.zegocloud.uikit.prebuilt.call.event.ErrorEventsListener;
 import com.zegocloud.uikit.prebuilt.call.event.SignalPluginConnectListener;
 import com.zegocloud.uikit.prebuilt.call.event.ZegoCallEndReason;
-import com.zegocloud.uikit.prebuilt.call.event.ZegoMenuBarButtonClickListener;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
-import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoCallInvitationData;
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoTranslationText;
 import com.zegocloud.uikit.prebuilt.call.invite.internal.ZegoUIKitPrebuiltCallConfigProvider;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
@@ -38,6 +40,12 @@ import org.json.JSONObject;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ActivityResultLauncher<String> permissionRequest = registerForActivityResult(new RequestPermission(),
+        result -> {
+            if (result) {
+            }
+        });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,19 +90,9 @@ public class MainActivity extends AppCompatActivity {
             builder.create().show();
         });
 
-        PermissionX.init(this).permissions(permission.SYSTEM_ALERT_WINDOW)
-            .onExplainRequestReason(new ExplainReasonCallback() {
-                @Override
-                public void onExplainReason(@NonNull ExplainScope scope, @NonNull List<String> deniedList) {
-                    String message = "We need your consent for the following permissions in order to use the offline call function properly";
-                    scope.showRequestReasonDialog(deniedList, message, "Allow", "Deny");
-                }
-            }).request(new RequestCallback() {
-                @Override
-                public void onResult(boolean allGranted, @NonNull List<String> grantedList,
-                    @NonNull List<String> deniedList) {
-                }
-            });
+        if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+            permissionRequest.launch(permission.POST_NOTIFICATIONS);
+        }
     }
 
     private void signOut() {
@@ -107,11 +105,9 @@ public class MainActivity extends AppCompatActivity {
         ZegoSendCallInvitationButton newVideoCall = findViewById(R.id.new_video_call);
         newVideoCall.setIsVideoCall(true);
 
-        //resourceID can be used to specify the ringtone of an offline call invitation,
+        //resourceID is used for offline call invitation,
         //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
-        //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
         //        newVideoCall.setResourceID("zegouikit_call");
-        newVideoCall.setResourceID("zego_data");
 
         newVideoCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
@@ -122,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
                 String userName = userID + "_name";
                 users.add(new ZegoUIKitUser(userID, userName));
             }
+
+            // call setInvitees method before button to send a invitation
             newVideoCall.setInvitees(users);
         });
     }
@@ -130,11 +128,9 @@ public class MainActivity extends AppCompatActivity {
         ZegoSendCallInvitationButton newVoiceCall = findViewById(R.id.new_voice_call);
         newVoiceCall.setIsVideoCall(false);
 
-        //resourceID can be used to specify the ringtone of an offline call invitation,
+        //resourceID is used for offline call invitation,
         //which must be set to the same value as the Push Resource ID in ZEGOCLOUD Admin Console.
-        //This only takes effect when the notifyWhenAppRunningInBackgroundOrQuit is true.
         //        newVoiceCall.setResourceID("zegouikit_call");
-        newVoiceCall.setResourceID("zego_data");
 
         newVoiceCall.setOnClickListener(v -> {
             TextInputLayout inputLayout = findViewById(R.id.target_user_id);
@@ -145,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 String userName = userID + "_name";
                 users.add(new ZegoUIKitUser(userID, userName));
             }
+            // call setInvitees method before button to send a invitation
             newVoiceCall.setInvitees(users);
         });
     }
@@ -153,16 +150,20 @@ public class MainActivity extends AppCompatActivity {
 
         ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
 
+        // optional,set language,default is English
         callInvitationConfig.translationText = new ZegoTranslationText(ZegoUIKitLanguage.CHS);
-        callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
-            @Override
-            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
-                ZegoUIKitPrebuiltCallConfig config = ZegoUIKitPrebuiltCallInvitationConfig.generateDefaultConfig(
-                    invitationData);
-                return config;
-            }
-        };
-        //
+
+        // optional
+        customCallConfig(callInvitationConfig);
+
+        // optional
+        listenEvents();
+
+        ZegoUIKitPrebuiltCallService.init(getApplication(), appID, appSign, userID, userName, callInvitationConfig);
+
+    }
+
+    private static void listenEvents() {
         ZegoUIKitPrebuiltCallService.events.setErrorEventsListener(new ErrorEventsListener() {
             @Override
             public void onError(int errorCode, String message) {
@@ -180,9 +181,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        ZegoUIKitPrebuiltCallService.init(getApplication(), appID, appSign, userID, userName,
-            callInvitationConfig);
-
         ZegoUIKitPrebuiltCallService.events.callEvents.setCallEndListener(new CallEndListener() {
             @Override
             public void onCallEnd(ZegoCallEndReason callEndReason, String jsonObject) {
@@ -190,7 +188,41 @@ public class MainActivity extends AppCompatActivity {
                     + "]");
             }
         });
+    }
 
+
+    private static void customCallConfig(ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig) {
+        callInvitationConfig.provider = new ZegoUIKitPrebuiltCallConfigProvider() {
+            @Override
+            public ZegoUIKitPrebuiltCallConfig requireConfig(ZegoCallInvitationData invitationData) {
+                ZegoUIKitPrebuiltCallConfig config = ZegoUIKitPrebuiltCallInvitationConfig.generateDefaultConfig(
+                    invitationData);
+                //                customAvatarConfig(config);
+                //                useGalleryConfig(config);
+                //                customMenuBars(config);
+                return config;
+            }
+        };
+    }
+
+
+    private void useGalleryConfig(ZegoUIKitPrebuiltCallConfig config) {
+        ZegoLayoutGalleryConfig galleryConfig = new ZegoLayoutGalleryConfig();
+        galleryConfig.removeViewWhenAudioVideoUnavailable = true;
+        galleryConfig.showNewScreenSharingViewInFullscreenMode = true;
+        galleryConfig.showScreenSharingFullscreenModeToggleButtonRules = ZegoShowFullscreenModeToggleButtonRules.SHOW_WHEN_SCREEN_PRESSED;
+        config.layout = new ZegoLayout(ZegoLayoutMode.GALLERY, galleryConfig);
+
+    }
+
+    private void customMenuBars(ZegoUIKitPrebuiltCallConfig config) {
+        config.bottomMenuBarConfig.buttons.add(ZegoMenuBarButtonName.CHAT_BUTTON);
+        config.bottomMenuBarConfig.buttons.add(ZegoMenuBarButtonName.SHOW_MEMBER_LIST_BUTTON);
+
+        config.bottomMenuBarConfig.buttonConfig.toggleCameraOnImage = ContextCompat.getDrawable(this,
+            R.drawable.call_icon_dialog_video_accept);
+        config.bottomMenuBarConfig.buttonConfig.toggleCameraOffImage = ContextCompat.getDrawable(this,
+            R.drawable.call_icon_dialog_voice_accept);
     }
 
     @Override

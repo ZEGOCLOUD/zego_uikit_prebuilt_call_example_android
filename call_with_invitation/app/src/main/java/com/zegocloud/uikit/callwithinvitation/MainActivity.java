@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputLayout;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
 import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationService;
 import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    ZegoUIKitPrebuiltCallInvitationService.unInit();
+                    ZegoUIKitPrebuiltCallService.unInit();
                     finish();
                 }
             });
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
 
-        ZegoUIKitPrebuiltCallInvitationService.init(getApplication(), appID, appSign, userID, userName,
+        ZegoUIKitPrebuiltCallService.init(getApplication(), appID, appSign, userID, userName,
             callInvitationConfig);
     }
 
@@ -104,6 +105,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ZegoUIKitPrebuiltCallInvitationService.unInit();
+        ZegoUIKitPrebuiltCallService.unInit();
     }
 }
